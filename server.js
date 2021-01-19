@@ -18,18 +18,18 @@ peer.on('signal', (data) => {
   console.log('mobile: ' + peerData);
 });
 
-clientPeer.on('signal', (data) => {
-  clientPeerData = JSON.stringify(data);
-  console.log('client: ' + clientPeerData);
-});
-
 peer.on('stream', (stream) => {
-  clientPeer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc, stream: stream })
-});
+  clientPeer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc, stream: stream });
 
-clientPeer.on('data', (data) => {
-  clientPeer.send(data);
-})
+  clientPeer.on('signal', (data) => {
+    clientPeerData = JSON.stringify(data);
+    console.log('client: ' + clientPeerData);
+  });
+
+  clientPeer.on('data', (data) => {
+    clientPeer.send(data);
+  });
+});
 
 app.use(helmet());
 app.use(express.static(path.join(__dirname, 'client')));
