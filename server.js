@@ -8,7 +8,7 @@ const app = express();
 const http = require('http').createServer(app);
 const PORT = process.env.PORT || 4200;
 const peer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc });
-let clientPeer; 
+const clientPeer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc });
 
 let clientPeerData;
 let peerData;
@@ -20,16 +20,20 @@ peer.on('signal', (data) => {
 
 peer.on('stream', (stream) => {
   console.log('received stream');
-  clientPeer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc, stream: stream });
+  clientPeer.addStream(stream);
+});
 
-  clientPeer.on('signal', (data) => {
-    clientPeerData = JSON.stringify(data);
-    console.log('client: ' + clientPeerData);
-  });
+peer.on('data', (data) => {
+  peer.send(data);
+});
 
-  clientPeer.on('data', (data) => {
-    clientPeer.send(data);
-  });
+clientPeer.on('signal', (data) => {
+  clientPeerData = JSON.stringify(data);
+  console.log('client: ' + clientPeerData);
+});
+
+clientPeer.on('data', (data) => {
+  clientPeer.send(data);
 });
 
 app.use(helmet());
@@ -45,14 +49,14 @@ app.post('/connectclient', (_, res) => {
   res.send(clientPeerData);
 });
 
-app.post('/connect', (_, res) => {
-  res.send(peerData);
-});
-
 app.post('/connectsignal', (req, res) => {
   console.log(req.query.data);
   peer.signal(req.query.data);
   res.send();
+});
+
+app.post('/connect', (_, res) => {
+  res.send(peerData);
 });
 
 app.get('/*', (_, res) => {
