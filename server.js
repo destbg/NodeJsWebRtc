@@ -39,23 +39,23 @@ clientPeer.on('data', (data) => {
 app.use(helmet());
 app.use(express.static(path.join(__dirname, 'client')));
 
-app.post('/connectclientsignal', (req, res) => {
+app.get('/connectclientsignal', (req, res) => {
   console.log(req.query.data);
   clientPeer.signal(req.query.data);
   res.send();
 });
 
-app.post('/connectclient', (_, res) => {
+app.get('/connectclient', (_, res) => {
   res.send(clientPeerData);
 });
 
-app.post('/connectsignal', (req, res) => {
+app.get('/connectsignal', (req, res) => {
   console.log(req.query.data);
   peer.signal(req.query.data);
   res.send();
 });
 
-app.post('/connect', (_, res) => {
+app.get('/connect', (_, res) => {
   res.send(peerData);
 });
 

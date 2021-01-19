@@ -17,15 +17,11 @@
   peer.on('signal', (data) => {
     data = JSON.stringify(data);
     console.log(data);
-    fetch('/connectclientsignal?data=' + encodeURI(data), {
-      method: 'POST'
-    });
+    fetch('/connectclientsignal?data=' + encodeURI(data));
   });
 
   button.addEventListener('click', async () => {
-    const res = await fetch('/connectclient', {
-      method: 'POST',
-    }).then((data) => data.text());
+    const res = await fetch('/connectclient').then((data) => data.text());
     console.log(res);
     peer.signal(res);
   });
