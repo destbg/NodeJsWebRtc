@@ -34,12 +34,6 @@ peer.on('stream', (stream) => {
 app.use(helmet());
 app.use(express.static(path.join(__dirname, 'client')));
 
-app.post('/connect', (req, res) => {
-  const data = req.query.data;
-  res.send(peerData);
-  peer.signal(data);
-});
-
 app.post('/connectclientsignal', (req, res) => {
   console.log(req.query.data);
   clientPeer.signal(req.query.data);
@@ -50,14 +44,14 @@ app.post('/connectclient', (_, res) => {
   res.send(clientPeerData);
 });
 
+app.post('/connect', (_, res) => {
+  res.send(peerData);
+});
+
 app.post('/connectsignal', (req, res) => {
   console.log(req.query.data);
   peer.signal(req.query.data);
   res.send();
-});
-
-app.post('/connect', (_, res) => {
-  res.send(peerData);
 });
 
 app.get('/*', (_, res) => {
