@@ -19,6 +19,7 @@ peer.on('signal', (data) => {
 });
 
 peer.on('stream', (stream) => {
+  console.log('received stream');
   clientPeer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc, stream: stream });
 
   clientPeer.on('signal', (data) => {
