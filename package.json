@@ -8,7 +8,6 @@
     "express": "^4.17.1",
     "helmet": "^3.23.3",
     "simple-peer": "^9.9.3",
-    "socket.io": "^2.3.0",
     "wrtc": "^0.4.7"
   }
 }
