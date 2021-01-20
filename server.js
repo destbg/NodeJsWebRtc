@@ -6,66 +6,53 @@ const SimplePeer = require("simple-peer");
 
 const app = express();
 const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 const PORT = process.env.PORT || 4200;
-const peer = new SimplePeer({ trickle: false, initiator: true, wrtc: wrtc });
-const clientPeer = new SimplePeer({
-  trickle: false,
-  initiator: true,
-  wrtc: wrtc,
-});
-
-let clientPeerData;
-let peerData;
-
-peer.on("signal", (data) => {
-  peerData = JSON.stringify(data);
-  console.log("mobile signal");
-});
-
-peer.on("stream", () => {
-  console.log("received stream");
-  // Transferring stream from one rtc to another
-  //clientPeer.addStream(stream);
-});
-
-peer.on("data", (data) => {
-  peer.send(data);
-});
-
-clientPeer.on("signal", (data) => {
-  clientPeerData = JSON.stringify(data);
-  console.log("client signal");
-});
-
-clientPeer.on("data", (data) => {
-  clientPeer.send(data);
-});
 
 app.use(helmet());
 app.use(express.static(path.join(__dirname, "client")));
 
-app.get("/connectclientsignal", (req, res) => {
-  clientPeer.signal(req.query.data);
-  res.send();
+const streams = [];
+
+io.on("connection", (sock) => {
+  const id = sock.id;
+  const peer = new SimplePeer({ trickle: false, wrtc: wrtc });
+
+  peer.on("signal", (data) => {
+    sock.emit("send-signal", JSON.stringify(data));
+  });
+
+  sock.on("disconnect", () => {
+    const index = streams.findIndex((f) => f.id == id);
+    if (index != -1) {
+      streams.splice(index, 1);
+    }
+    peer.end();
+  });
+
+  sock.on("is-stream", () => {
+    streams.push({ id: id, peer: peer });
+  });
+
+  sock.on("signal", (data) => {
+    peer.signal(data);
+  });
+
+  sock.on("join-stream", (stream) => {
+    const clientPeer = streams.findIndex((f) => f.id == stream);
+    if (clientPeer) {
+      const audioTrack = clientPeer._pc.addTransceiver("audio").receiver.track;
+      const videoTrack = clientPeer._pc.addTransceiver("video").receiver.track;
+      const audioTransceiver = peer._pc.addTransceiver("audio");
+      const videoTransceiver = peer._pc.addTransceiver("video");
+      audioTransceiver.sender.replaceTrack(audioTrack);
+      videoTransceiver.sender.replaceTrack(videoTrack);
+    }
+  });
 });
 
-app.get("/connectclient", (_, res) => {
-  res.send(clientPeerData);
-});
-
-app.get("/connectsignal", (req, res) => {
-  peer.signal(req.query.data);
-  const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
-  const videoTrack = peer._pc.addTransceiver("video").receiver.track;
-  const audioTransceiver = clientPeer._pc.addTransceiver("audio");
-  const videoTransceiver = clientPeer._pc.addTransceiver("video");
-  audioTransceiver.sender.replaceTrack(audioTrack);
-  videoTransceiver.sender.replaceTrack(videoTrack);
-  res.send();
-});
-
-app.get("/connect", (_, res) => {
-  res.send(peerData);
+app.get("/streams", (_, res) => {
+  res.json({ streams: streams.map((f) => f.id) });
 });
 
 app.get("/*", (_, res) => {

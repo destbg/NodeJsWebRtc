@@ -1,46 +1,61 @@
 (async () => {
-  const input = document.querySelector("input");
-  const video = document.querySelector("video");
-  const button = document.getElementById("open-stream");
-  const buttonSend = document.getElementById("send-text");
-  const peer = new SimplePeer({
-    trickle: false,
-    config: {
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:global.stun.twilio.com:3478?transport=udp" },
-      ],
-    },
-  });
-
-  peer.on("data", (data) => {
-    console.log(data);
-  });
-
-  buttonSend.addEventListener("click", () => {
-    peer.send(input.value);
-    input.value = "";
-  });
+  const startStream = document.getElementById("start-stream");
+  const myStream = document.getElementById("my-stream");
+  const playStream = document.getElementById("play-stream");
+  const otherStreams = document.getElementById("other-streams");
+  const socket = io();
+  const peer = new SimplePeer({ trickle: false, initiator: true });
 
   peer.on("signal", (data) => {
-    data = JSON.stringify(data);
-    console.log(data);
-    fetch("/connectclientsignal?data=" + encodeURI(data));
+    socket.emit("signal", JSON.stringify(data));
   });
 
-  button.addEventListener("click", async () => {
-    const res = await fetch("/connectclient").then((data) => data.text());
-    console.log(res);
-    peer.signal(res);
+  socket.on("signal", (data) => {
+    peer.signal(data);
+  });
+
+  startStream.addEventListener("click", async () => {
+    socket.emit("is-stream");
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+
+    if ("srcObject" in myStream) {
+      myStream.srcObject = stream;
+    } else {
+      myStream.src = window.URL.createObjectURL(stream); // for older browsers
+    }
+    myStream.play();
   });
 
   peer.on("stream", (stream) => {
-    if ("srcObject" in video) {
-      video.srcObject = stream;
+    if ("srcObject" in playStream) {
+      playStream.srcObject = stream;
     } else {
-      video.src = window.URL.createObjectURL(stream); // for older browsers
+      playStream.src = window.URL.createObjectURL(stream); // for older browsers
     }
-
-    video.play();
+    playStream.play();
   });
+
+  getStreams();
+
+  async function getStreams() {
+    otherStreams.innerHTML = "";
+    const streamsResult = await fetch("/streams").then((data) => data.json());
+
+    for (const stream of streamsResult.streams) {
+      const button = document.createElement("button");
+      button.innerHTML = stream;
+      button.addEventListener("click", () => {
+        joinStream(stream);
+      });
+
+      otherStreams.appendChild(button);
+    }
+  }
+
+  function joinStream(stream) {
+    socket.emit("join-stream", stream);
+  }
 })();
