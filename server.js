@@ -20,6 +20,12 @@ let peerData;
 peer.on("signal", (data) => {
   peerData = JSON.stringify(data);
   console.log("mobile signal");
+  const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
+  const videoTrack = peer._pc.addTransceiver("video").receiver.track;
+  const audioTransceiver = clientPeer._pc.addTransceiver("audio");
+  const videoTransceiver = clientPeer._pc.addTransceiver("video");
+  audioTransceiver.sender.replaceTrack(audioTrack);
+  videoTransceiver.sender.replaceTrack(videoTrack);
 });
 
 peer.on("stream", () => {
@@ -45,7 +51,6 @@ app.use(helmet());
 app.use(express.static(path.join(__dirname, "client")));
 
 app.get("/connectclientsignal", (req, res) => {
-  console.log(req.query.data);
   clientPeer.signal(req.query.data);
   res.send();
 });
@@ -55,14 +60,7 @@ app.get("/connectclient", (_, res) => {
 });
 
 app.get("/connectsignal", (req, res) => {
-  console.log(req.query.data);
   peer.signal(req.query.data);
-  const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
-  const videoTrack = peer._pc.addTransceiver("video").receiver.track;
-  const audioTransceiver = clientPeer._pc.addTransceiver("audio");
-  const videoTransceiver = clientPeer._pc.addTransceiver("video");
-  audioTransceiver.sender.replaceTrack(audioTrack);
-  videoTransceiver.sender.replaceTrack(videoTrack);
   res.send();
 });
 
