@@ -39,7 +39,8 @@ io.on("connection", (sock) => {
   });
 
   sock.on("join-stream", (stream) => {
-    const clientPeer = streams.findIndex((f) => f.id == stream);
+    const index = streams.findIndex((f) => f.id == stream);
+    const clientPeer = streams[index];
     if (clientPeer) {
       const audioTrack = clientPeer._pc.addTransceiver("audio").receiver.track;
       const videoTrack = clientPeer._pc.addTransceiver("video").receiver.track;
