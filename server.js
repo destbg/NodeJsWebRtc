@@ -14,19 +14,12 @@ const clientPeer = new SimplePeer({
   wrtc: wrtc,
 });
 
-const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
-const videoTrack = peer._pc.addTransceiver("video").receiver.track;
-const audioTransceiver = clientPeer._pc.addTransceiver("audio");
-const videoTransceiver = clientPeer._pc.addTransceiver("video");
-audioTransceiver.sender.replaceTrack(audioTrack);
-videoTransceiver.sender.replaceTrack(videoTrack);
-
 let clientPeerData;
 let peerData;
 
 peer.on("signal", (data) => {
   peerData = JSON.stringify(data);
-  console.log("mobile: " + peerData);
+  console.log("mobile signal");
 });
 
 peer.on("stream", () => {
@@ -41,7 +34,7 @@ peer.on("data", (data) => {
 
 clientPeer.on("signal", (data) => {
   clientPeerData = JSON.stringify(data);
-  console.log("client: " + clientPeerData);
+  console.log("client signal");
 });
 
 clientPeer.on("data", (data) => {
@@ -64,6 +57,12 @@ app.get("/connectclient", (_, res) => {
 app.get("/connectsignal", (req, res) => {
   console.log(req.query.data);
   peer.signal(req.query.data);
+  const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
+  const videoTrack = peer._pc.addTransceiver("video").receiver.track;
+  const audioTransceiver = clientPeer._pc.addTransceiver("audio");
+  const videoTransceiver = clientPeer._pc.addTransceiver("video");
+  audioTransceiver.sender.replaceTrack(audioTrack);
+  videoTransceiver.sender.replaceTrack(videoTrack);
   res.send();
 });
 
