@@ -15,6 +15,7 @@
   socket.on("send-signal", (data) => {
     console.log("receiving signal");
     peer.signal(data);
+    document.getElementById("loading").style.display = "none";
   });
 
   startStream.addEventListener("click", async () => {

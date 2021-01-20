@@ -13,8 +13,19 @@
       defer
     ></script>
     <script src="main.js" defer></script>
+    <style>
+      #loading {
+        background-color: white;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    </style>
   </head>
   <body>
+    <div id="loading"></div>
     <button id="start-stream">Start stream</button>
     <video id="my-stream" muted></video>
     <div id="other-streams"></div>
