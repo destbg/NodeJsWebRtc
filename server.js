@@ -31,7 +31,10 @@ io.on("connection", (sock) => {
   });
 
   sock.on("is-stream", () => {
-    streams.push({ id: id, peer: peer });
+    streams.push({
+      id: id,
+      peer: peer,
+    });
   });
 
   sock.on("signal", (data) => {
@@ -41,13 +44,13 @@ io.on("connection", (sock) => {
   sock.on("join-stream", (stream) => {
     const streamReceiver = streams.find((f) => f.id == stream);
     if (streamReceiver) {
-      const clientPeer = streamReceiver.peer;
-      const audioTrack = clientPeer._pc.addTransceiver("audio").receiver.track;
-      const videoTrack = clientPeer._pc.addTransceiver("video").receiver.track;
-      const audioTransceiver = peer._pc.addTransceiver("audio");
-      const videoTransceiver = peer._pc.addTransceiver("video");
-      audioTransceiver.sender.replaceTrack(audioTrack);
-      videoTransceiver.sender.replaceTrack(videoTrack);
+      peer.addStream(
+        new wrtc.MediaStream(
+          streamReceiver.peer._pc
+            .getReceivers()
+            .map((receiver) => receiver.track)
+        )
+      );
     }
   });
 });
