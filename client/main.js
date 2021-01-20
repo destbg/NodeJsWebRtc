@@ -3,14 +3,17 @@
   const myStream = document.getElementById("my-stream");
   const playStream = document.getElementById("play-stream");
   const otherStreams = document.getElementById("other-streams");
+  const reloadStreams = document.getElementById("reload-streams");
   const socket = io();
   const peer = new SimplePeer({ trickle: false, initiator: true });
 
   peer.on("signal", (data) => {
+    console.log("sending signal");
     socket.emit("signal", JSON.stringify(data));
   });
 
   socket.on("send-signal", (data) => {
+    console.log("receiving signal");
     peer.signal(data);
   });
 
@@ -37,6 +40,8 @@
     }
     playStream.play();
   });
+
+  reloadStreams.addEventListener("click", () => getStreams());
 
   getStreams();
 
