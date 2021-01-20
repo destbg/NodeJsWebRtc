@@ -15,12 +15,8 @@ app.use(express.static(path.join(__dirname, "client")));
 const streams = [];
 
 io.on("connection", (sock) => {
-  //const id = sock.id;
-  //const peer = new SimplePeer({ trickle: false, wrtc: wrtc });
-
-  peer.on("signal", (data) => {
-    sock.emit("send-signal", JSON.stringify(data));
-  });
+  const id = sock.id;
+  let peer;
 
   sock.on("disconnect", () => {
     const index = streams.findIndex((f) => f.id == id);
@@ -35,6 +31,10 @@ io.on("connection", (sock) => {
   });
 
   sock.on("signal", (data) => {
+    peer = new SimplePeer({ trickle: false, wrtc: wrtc });
+    peer.on("signal", (data) => {
+      sock.emit("send-signal", JSON.stringify(data));
+    });
     peer.signal(data);
   });
 
