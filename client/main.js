@@ -30,6 +30,8 @@
       myStream.src = window.URL.createObjectURL(stream); // for older browsers
     }
     myStream.play();
+
+    peer.addStream(stream);
   });
 
   peer.on("stream", (stream) => {
