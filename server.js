@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, "client")));
 const streams = [];
 
 io.on("connection", (sock) => {
-  const id = sock.id;
+  //const id = sock.id;
   //const peer = new SimplePeer({ trickle: false, wrtc: wrtc });
 
   peer.on("signal", (data) => {
