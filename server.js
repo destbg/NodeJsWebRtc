@@ -14,21 +14,22 @@ const clientPeer = new SimplePeer({
   wrtc: wrtc,
 });
 
+const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
+const videoTrack = peer._pc.addTransceiver("video").receiver.track;
+const audioTransceiver = clientPeer._pc.addTransceiver("audio");
+const videoTransceiver = clientPeer._pc.addTransceiver("video");
+audioTransceiver.sender.replaceTrack(audioTrack);
+videoTransceiver.sender.replaceTrack(videoTrack);
+
 let clientPeerData;
 let peerData;
 
 peer.on("signal", (data) => {
   peerData = JSON.stringify(data);
   console.log("mobile: " + peerData);
-  const audioTrack = peer._pc.addTransceiver("audio").receiver.track;
-  const videoTrack = peer._pc.addTransceiver("video").receiver.track;
-  const audioTransceiver = clientPeer._pc.addTransceiver("audio");
-  const videoTransceiver = clientPeer._pc.addTransceiver("video");
-  audioTransceiver.sender.replaceTrack(audioTrack);
-  videoTransceiver.sender.replaceTrack(videoTrack);
 });
 
-peer.on("stream", (stream) => {
+peer.on("stream", () => {
   console.log("received stream");
   // Transferring stream from one rtc to another
   //clientPeer.addStream(stream);
