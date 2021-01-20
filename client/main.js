@@ -10,7 +10,7 @@
     socket.emit("signal", JSON.stringify(data));
   });
 
-  socket.on("signal", (data) => {
+  socket.on("send-signal", (data) => {
     peer.signal(data);
   });
 
