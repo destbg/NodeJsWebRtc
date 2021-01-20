@@ -16,7 +16,7 @@ const streams = [];
 
 io.on("connection", (sock) => {
   const id = sock.id;
-  const peer = new SimplePeer({ trickle: false, wrtc: wrtc });
+  //const peer = new SimplePeer({ trickle: false, wrtc: wrtc });
 
   peer.on("signal", (data) => {
     sock.emit("send-signal", JSON.stringify(data));
