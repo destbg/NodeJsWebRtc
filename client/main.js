@@ -23,10 +23,10 @@
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: {
-        width: { min: 1024, ideal: 1280, max: 1920 },
-        height: { min: 576, ideal: 720, max: 1080 },
+        width: { min: 640, ideal: 1280, max: 1920 },
+        height: { min: 480, ideal: 720, max: 1080 },
+        frameRate: { min: 10, ideal: 24, max: 60 },
         facingMode: "environment",
-        frameRate: { ideal: 24, max: 60 },
       },
     });
 
