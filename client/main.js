@@ -25,7 +25,8 @@
       video: {
         width: { min: 1024, ideal: 1280, max: 1920 },
         height: { min: 576, ideal: 720, max: 1080 },
-        facingMode: { exact: "environment" },
+        facingMode: "environment",
+        frameRate: { ideal: 24, max: 60 },
       },
     });
 

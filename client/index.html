@@ -44,7 +44,7 @@
         }
       }
 
-      #my-stream {
+      .video-controls {
         width: 300px;
         height: 300px;
       }
@@ -55,7 +55,9 @@
       <div class="loader"></div>
     </div>
     <button id="start-stream">Start stream</button>
-    <video id="my-stream" muted autoplay playsinline></video>
+    <div class="video-controls">
+      <video id="my-stream" muted autoplay playsinline></video>
+    </div>
     <div id="other-streams"></div>
     <video id="play-stream" controls></video>
     <button id="reload-streams">Reload streams</button>
