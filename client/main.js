@@ -22,7 +22,11 @@
     socket.emit("is-stream");
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
-      video: true,
+      video: {
+        width: { min: 1024, ideal: 1280, max: 1920 },
+        height: { min: 576, ideal: 720, max: 1080 },
+        facingMode: { exact: "environment" },
+      },
     });
 
     if ("srcObject" in myStream) {
