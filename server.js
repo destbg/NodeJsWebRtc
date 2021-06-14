@@ -12,21 +12,26 @@ const PORT = process.env.PORT || 4200;
 app.use(helmet());
 app.use(express.static(path.join(__dirname, "client")));
 
-const streams = [];
+let streams = [];
 
 io.on("connection", (sock) => {
+  console.log(sock.id + " connected");
   const id = sock.id;
-  const peer = new SimplePeer({ trickle: false, wrtc: wrtc });
+  const peer = new SimplePeer({ trickle: false, wrtc: wrtc, initiator: true });
 
   peer.on("signal", (data) => {
+    console.log(id + " sending signal");
     sock.emit("send-signal", JSON.stringify(data));
   });
 
+  sock.on("signal", (data) => {
+    console.log(id + " received signal");
+    peer.signal(data);
+  });
+
   sock.on("disconnect", () => {
-    const index = streams.findIndex((f) => f.id == id);
-    if (index != -1) {
-      streams.splice(index, 1);
-    }
+    console.log(id + " disconnected");
+    streams = streams.filter((f) => f.id != id);
     peer.end();
   });
 
@@ -35,10 +40,6 @@ io.on("connection", (sock) => {
       id: id,
       peer: peer,
     });
-  });
-
-  sock.on("signal", (data) => {
-    peer.signal(data);
   });
 
   sock.on("join-stream", (stream) => {
@@ -57,6 +58,14 @@ io.on("connection", (sock) => {
 
 app.get("/streams", (_, res) => {
   res.json({ streams: streams.map((f) => f.id) });
+});
+
+app.get("/stream", (_, res) => {
+  res.sendFile(path.join(__dirname, "client", "stream.html"));
+});
+
+app.get("/streaming", (_, res) => {
+  res.sendFile(path.join(__dirname, "client", "streaming.html"));
 });
 
 app.get("/*", (_, res) => {

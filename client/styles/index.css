@@ -1,0 +1,13 @@
+.stream-link {
+  background-image: url("/imgs/fire.jpg");
+  background-position: center;
+  background-size: cover;
+  color: blue;
+  padding: 5em 2em;
+  cursor: pointer;
+  margin: 0.2em;
+  border-radius: 0.5em;
+  border-width: 0;
+  display: inline-block;
+  font-weight: bold;
+}

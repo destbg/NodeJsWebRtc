@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+button {
+  color: white;
+  padding: 1em;
+  background-color: #0e6dff;
+  cursor: pointer;
+  margin: 0.2em;
+  border-radius: 0.5em;
+  border-width: 0;
+}

@@ -3,63 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test Custom Stream</title>
-    <script
-      defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.9.3/simplepeer.min.js"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.0/socket.io.js"
-      defer
-    ></script>
-    <script src="main.js" defer></script>
-    <style>
-      #loading {
-        background-color: white;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-
-      .loader {
-        position: fixed;
-        top: 45vh;
-        left: 45vw;
-        border: 16px solid #f3f3f3; /* Light grey */
-        border-top: 16px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 2s linear infinite;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
+    <title>Streams</title>
+    <script src="script/index.js" defer></script>
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/index.css" />
   </head>
   <body>
-    <div id="loading">
-      <div class="loader"></div>
-    </div>
-    <button id="start-stream">Start stream</button>
-    <video
-      id="my-stream"
-      width="30%"
-      height="30%"
-      muted
-      autoplay
-      playsinline
-    ></video>
     <div id="other-streams"></div>
-    <video id="play-stream" controls></video>
-    <button id="reload-streams">Reload streams</button>
+    <button id="reload-streams">Презареди страницата</button>
   </body>
 </html>
