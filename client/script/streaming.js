@@ -1,7 +1,6 @@
 const myStream = document.getElementById("my-stream");
 const socket = io();
 const peer = new SimplePeer({ trickle: false });
-let isPeerConnected = false;
 
 socket.on("send-signal", (data) => {
   console.log("receiving signal");
@@ -15,7 +14,7 @@ peer.on("signal", (data) => {
 
 peer.on("connect", async () => {
   document.getElementById("loading").style.display = "none";
-  isPeerConnected = true;
+  await startStream();
 });
 
 peer.on("stream", (stream) => {
@@ -28,10 +27,6 @@ peer.on("stream", (stream) => {
 });
 
 async function startStream() {
-  while (!isPeerConnected) {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-
   socket.emit("is-stream");
 
   const stream = await navigator.mediaDevices.getUserMedia({
