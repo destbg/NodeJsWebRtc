@@ -28,6 +28,10 @@ peer.on("stream", (stream) => {
 });
 
 async function startStream() {
+  while (!isPeerConnected) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
   socket.emit("is-stream");
 
   const stream = await navigator.mediaDevices.getUserMedia({
@@ -46,10 +50,6 @@ async function startStream() {
     myStream.src = window.URL.createObjectURL(stream);
   }
   myStream.play();
-
-  while (!isPeerConnected) {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
 
   peer.addStream(stream);
 }
