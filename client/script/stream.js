@@ -15,21 +15,20 @@ socket.on("send-signal", (data) => {
 
 peer.on("connect", () => {
   document.getElementById("loading").style.display = "none";
+  socket.emit(
+    "join-stream",
+    new URLSearchParams(window.location.search).get("id")
+  );
 });
 
 peer.on("stream", (stream) => {
   if ("srcObject" in playStream) {
     playStream.srcObject = stream;
   } else {
-    playStream.src = window.URL.createObjectURL(stream); // for older browsers
+    playStream.src = window.URL.createObjectURL(stream);
   }
   playStream.play();
 });
-
-socket.emit(
-  "join-stream",
-  new URLSearchParams(window.location.search).get("id")
-);
 
 backButton.addEventListener("click", () => {
   window.location.href = "/";

@@ -1,5 +1,7 @@
 const myStream = document.getElementById("my-stream");
-const socket = io();
+const socket = io({
+  reconnection: true,
+});
 const peer = new SimplePeer({ trickle: false });
 
 socket.on("send-signal", (data) => {
@@ -15,15 +17,6 @@ peer.on("signal", (data) => {
 peer.on("connect", async () => {
   document.getElementById("loading").style.display = "none";
   await startStream();
-});
-
-peer.on("stream", (stream) => {
-  if ("srcObject" in playStream) {
-    playStream.srcObject = stream;
-  } else {
-    playStream.src = window.URL.createObjectURL(stream); // for older browsers
-  }
-  playStream.play();
 });
 
 async function startStream() {
