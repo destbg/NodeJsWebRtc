@@ -17,12 +17,7 @@ let streams = [];
 io.on("connection", (sock) => {
   console.log(sock.id + " connected");
   const id = sock.id;
-  const is_stream = sock.handshake.query.is_stream;
-  const peer = new SimplePeer({
-    trickle: false,
-    wrtc: wrtc,
-    initiator: !is_stream,
-  });
+  const peer = new SimplePeer({ trickle: false, wrtc: wrtc, initiator: true });
 
   peer.on("signal", (data) => {
     console.log(id + " sending signal");
