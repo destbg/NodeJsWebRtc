@@ -1,8 +1,11 @@
 const myStream = document.getElementById("my-stream");
 const socket = io({
   reconnection: true,
+  query: {
+    is_stream: true,
+  },
 });
-const peer = new SimplePeer({ trickle: false });
+const peer = new SimplePeer({ trickle: false, initiator: true });
 
 socket.on("send-signal", (data) => {
   console.log("receiving signal");

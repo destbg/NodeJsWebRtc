@@ -1,6 +1,8 @@
 const backButton = document.getElementById("back");
 const playStream = document.getElementById("play-stream");
-const socket = io();
+const socket = io({
+  is_stream: false,
+});
 const peer = new SimplePeer({ trickle: false });
 
 peer.on("signal", (data) => {
